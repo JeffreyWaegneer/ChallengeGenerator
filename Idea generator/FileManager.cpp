@@ -6,6 +6,9 @@ std::map <std::string, std::vector<std::string>*> FileManager::listsInMem;
 
 std::vector<std::string>* FileManager::GetList(std::string name)
 {
+	std::map<std::string, std::vector<std::string>*>::iterator existsIt = FileManager::listsInMem.find(name);
+	if (existsIt != FileManager::listsInMem.end())
+		return (*existsIt).second;
 	std::string filename = name + "s.whatever";
 	std::ifstream inputFile{ filename };
 	std::string buffer;

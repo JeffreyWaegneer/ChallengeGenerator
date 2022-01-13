@@ -1,4 +1,3 @@
-Buy {item}
 Dive {lane}
-Kill {camp}
-Test {camp} {lane}
+Kill {lane}
+Take {camp} and buy {item}
