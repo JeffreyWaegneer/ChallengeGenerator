@@ -29,6 +29,18 @@ std::vector<std::string>* FileManager::GetList(std::string name)
 	return res;
 }
 
+void FileManager::WriteList(std::string fileName, std::vector<std::string>* listToWrite)
+{
+	std::ofstream outputFile{ fileName };
+	if (outputFile.is_open())
+	{
+		for (std::vector<std::string>::iterator it = listToWrite->begin(); it != listToWrite->end(); it++)
+		{
+			outputFile.write((*it).c_str(), (*it).size()).write("\n", 1);
+		}
+	}
+}
+
 void FileManager::deleteList(std::string name)
 {
 	std::map<std::string, std::vector<std::string>*>::iterator iterToDelete = listsInMem.find(name);

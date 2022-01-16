@@ -66,8 +66,6 @@ void GenerateChallenges(std::vector<std::string>* templateList, std::vector<std:
     for (unsigned int i = 0; i < templateList->size(); i++)
     {
         std::string tempString = templateList->at(i);
-        size_t posStart = tempString.find('{');
-        size_t posEnd = tempString.find('}');
 
         LoadAllListsForTemplate(tempString);
 
@@ -82,27 +80,63 @@ void GenerateChallenges(std::vector<std::string>* templateList, std::vector<std:
     }
 }
 
-int main()
+std::string GenerateRandomChallenge(std::vector<std::string>* templateList)
 {
     srand(time(0));
+    std::string tempString = templateList->at(rand() % templateList->size());
+    int countStart = std::count(tempString.begin(), tempString.end(), '{');
+    int countEnd = std::count(tempString.begin(), tempString.end(), '}');
+    if (countStart != countEnd)
+        return "Invalid symbol number";
 
+    for (unsigned int i = 0; i < countStart; i++)
+    {
+        int posStart = tempString.find('{');
+        int posEnd = tempString.find('}');
+        std::string temp = tempString.substr(posStart + 1, posEnd - posStart - 1);
+        std::vector<std::string>* l = FileManager::GetList(temp);
+        tempString.replace(posStart, posEnd - posStart + 1, l->at(rand() % l->size()));
+    }
+
+    return tempString;
+}
+
+int main(int argc, char** argv)
+{
+    srand(time(0));
     std::vector<std::string>* challengeTemplates = FileManager::GetList("challenge");
-    std::vector<std::string> allPossibleChallenges;
-
+    std::string argv1(argv[1]);
+    
     if (challengeTemplates == nullptr)
     {
         std::cout << "challenges.whatever not found" << std::endl;
         return 0;
     }
-    
-    GenerateChallenges(challengeTemplates, allPossibleChallenges);
-    std::random_shuffle(allPossibleChallenges.begin(), allPossibleChallenges.end());
 
-    for (std::vector<std::string>::iterator i = allPossibleChallenges.begin(); i != allPossibleChallenges.end(); i++)
+    if (argv1 == "/list")
     {
-        std::cout << *i << std::endl;
+        std::string fileName;
+        if (argv[2] == nullptr)
+            fileName = "GeneratedChallenges.whatever";
+        else
+            fileName = argv[2];
+
+        std::vector<std::string> allPossibleChallenges;
+
+        GenerateChallenges(challengeTemplates, allPossibleChallenges);
+        std::random_shuffle(allPossibleChallenges.begin(), allPossibleChallenges.end());
+
+        FileManager::WriteList(fileName, &allPossibleChallenges);
+
+        std::cout << "Generated challenges can be found in the '" << fileName << "' file" << std::endl;
     }
 
+    if (argv1 == "/challenge")
+    {
+        std::string challenge = GenerateRandomChallenge(challengeTemplates);
+        std::cout << challenge << std::endl;
+    }
+    
     FileManager::deleteAllLists();
 
     return 0;

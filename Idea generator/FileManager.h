@@ -10,7 +10,7 @@ class FileManager
 {
 public:
 	static std::vector<std::string>* GetList(std::string name);
-
+	static void WriteList(std::string fileName, std::vector<std::string>* listToWrite);
 
 	static void deleteList(std::string name);
 	static void deleteAllLists();
