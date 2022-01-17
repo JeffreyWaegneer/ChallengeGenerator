@@ -9,4 +9,5 @@ int main()
     ChallengeGenerator::Init();
     std::string c = ChallengeGenerator::GenerateChallenge(DIFFICULTY::BRONZE);
     std::cout << c << std::endl;
+    ChallengeGenerator::CleanUp();
 }
